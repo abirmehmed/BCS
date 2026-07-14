@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700&family=Noto+Sans+Bengali:wght@400;500;600&family=Noto+Sans:wght@400;500;600&display=swap');
+
+:root{
+  --paper: #f6f1e4;
+  --paper-raised: #fffdf7;
+  --ink: #1c2b42;
+  --ink-soft: #5c6577;
+  --line: #ddd3ba;
+  --gold: #a9781f;
+  --gold-soft: #ecdfba;
+  --brick: #9c3b2c;
+  --brick-soft: #f4e1dc;
+  --forest: #2e6a4f;
+  --forest-soft: #dfeee5;
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(28,43,66,.06), 0 6px 20px rgba(28,43,66,.05);
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  margin:0;
+  background: var(--paper);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(28,43,66,.035) 1px, transparent 0);
+  background-size: 22px 22px;
+  color: var(--ink);
+  font-family: 'Noto Sans Bengali','Noto Sans',sans-serif;
+  min-height: 100vh;
+}
+
+.hidden{ display:none !important; }
+
+/* ── Header ─────────────────────────────────────────────── */
+header.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-raised);
+}
+.brand{ display:flex; align-items:center; gap:12px; }
+.seal{
+  width:40px; height:40px; border-radius:50%;
+  border: 2px solid var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Noto Serif Bengali',serif; font-weight:700; color:var(--gold);
+  font-size:13px; flex-shrink:0;
+}
+.brand-text h1{
+  font-family:'Noto Serif Bengali',serif; font-size:19px; margin:0; font-weight:700;
+  letter-spacing:.2px;
+}
+.brand-text span{ font-size:12px; color:var(--ink-soft); }
+.nav-actions{ display:flex; gap:10px; }
+.nav-btn{
+  border:1px solid var(--line); background:var(--paper-raised); color:var(--ink);
+  padding:8px 16px; border-radius: 999px; font-size:13px; cursor:pointer;
+  font-family:inherit; transition:.15s;
+}
+.nav-btn:hover{ border-color:var(--gold); color:var(--gold); }
+.nav-btn.primary{ background:var(--ink); color:var(--paper-raised); border-color:var(--ink); }
+.nav-btn.primary:hover{ opacity:.9; color:var(--paper-raised); }
+
+main{ max-width: 920px; margin: 0 auto; padding: 32px 20px 60px; }
+
+/* ── Home / subject grid ────────────────────────────────── */
+.hero{ text-align:center; margin-bottom:28px; }
+.hero h2{ font-family:'Noto Serif Bengali',serif; font-size:26px; margin:0 0 6px; }
+.hero p{ color:var(--ink-soft); font-size:14px; margin:0; }
+
+.subject-grid{
+  display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
+  gap:14px;
+}
+.subject-card{
+  text-align:left; background:var(--paper-raised); border:1px solid var(--line);
+  border-radius:var(--radius); padding:18px; cursor:pointer; box-shadow:var(--shadow);
+  font-family:inherit; transition:.15s; position:relative; overflow:hidden;
+}
+.subject-card:hover{ border-color:var(--gold); transform:translateY(-1px); }
+.subject-marks{
+  font-family:'Noto Serif Bengali',serif; font-size:26px; color:var(--gold); font-weight:700;
+  line-height:1;
+}
+.subject-marks span{ font-size:11px; color:var(--ink-soft); font-family:'Noto Sans Bengali',sans-serif; font-weight:400; margin-left:4px; }
+.subject-name{ font-size:15px; font-weight:600; margin-top:10px; line-height:1.4; }
+.subject-count{ font-size:12px; color:var(--ink-soft); margin-top:8px; }
+
+/* ── Setup screen ───────────────────────────────────────── */
+.panel{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius);
+  padding:26px; box-shadow:var(--shadow);
+}
+.panel-header{ display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+.ghost-btn{
+  border:none; background:none; color:var(--ink-soft); cursor:pointer; font-size:13px;
+  font-family:inherit; padding:4px 0;
+}
+.ghost-btn:hover{ color:var(--ink); }
+#setupTitle{ font-family:'Noto Serif Bengali',serif; font-size:20px; margin:0; }
+
+.field-label{
+  display:block; font-size:12px; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--ink-soft); margin: 18px 0 8px; font-weight:600;
+}
+.subtopic-list{ display:flex; flex-wrap:wrap; gap:8px; }
+.subtopic-chip{
+  border:1px solid var(--line); background:var(--paper); color:var(--ink);
+  padding:9px 14px; border-radius:999px; font-size:13px; cursor:pointer; font-family:inherit;
+}
+.subtopic-chip.selected{ background:var(--ink); border-color:var(--ink); color:var(--paper-raised); }
+
+.count-row{ display:flex; align-items:center; gap:10px; margin-top:6px; }
+.count-row input[type=number]{
+  width:80px; padding:9px 10px; border:1px solid var(--line); border-radius:8px;
+  font-family:inherit; font-size:14px; background:var(--paper);
+}
+#setupAvailable{ font-size:13px; color:var(--ink-soft); margin-top:14px; }
+
+.primary-btn{
+  width:100%; margin-top:22px; padding:13px; border:none; border-radius:8px;
+  background:var(--ink); color:var(--paper-raised); font-size:15px; font-weight:600;
+  cursor:pointer; font-family:inherit;
+}
+.primary-btn:disabled{ opacity:.4; cursor:not-allowed; }
+.primary-btn:not(:disabled):hover{ background:#0f1c2e; }
+
+/* ── Quiz screen ────────────────────────────────────────── */
+.quiz-topline{ display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--ink-soft); margin-bottom:10px; }
+.progress-bar{ height:5px; background:var(--line); border-radius:999px; overflow:hidden; margin-bottom:22px; }
+.progress-fill{ height:100%; background:var(--gold); transition:width .25s; }
+
+.quiz-tag{
+  display:inline-block; font-size:11px; text-transform:uppercase; letter-spacing:.05em;
+  color:var(--gold); background:var(--gold-soft); padding:4px 10px; border-radius:999px;
+  margin-bottom:14px; font-weight:600;
+}
+#questionText{
+  font-family:'Noto Serif Bengali',serif; font-size:19px; line-height:1.6; margin: 0 0 22px;
+}
+
+.options-wrap{ display:flex; flex-direction:column; gap:10px; }
+.quiz-option{
+  display:flex; align-items:center; gap:12px; text-align:left;
+  border:1px solid var(--line); background:var(--paper); padding:13px 16px;
+  border-radius:8px; cursor:pointer; font-family:inherit; font-size:14.5px; color:var(--ink);
+  transition:.12s;
+}
+.quiz-option:hover:not(.locked){ border-color:var(--gold); background:var(--gold-soft); }
+.opt-label{
+  width:24px; height:24px; border-radius:50%; border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0;
+  font-weight:600; color:var(--ink-soft);
+}
+.quiz-option.locked{ cursor:default; }
+.quiz-option.correct{ border-color:var(--forest); background:var(--forest-soft); }
+.quiz-option.correct .opt-label{ border-color:var(--forest); color:var(--forest); }
+.quiz-option.wrong{ border-color:var(--brick); background:var(--brick-soft); }
+.quiz-option.wrong .opt-label{ border-color:var(--brick); color:var(--brick); }
+.quiz-option.dim{ opacity:.5; }
+
+.explain-box{
+  margin-top:18px; padding:14px 16px; background:var(--gold-soft); border-radius:8px;
+  border-left:3px solid var(--gold); font-size:13.5px; line-height:1.6;
+}
+.explain-box b{ display:block; margin-bottom:4px; color:var(--gold); font-size:12px; text-transform:uppercase; letter-spacing:.05em; }
+
+.quiz-actions{ display:flex; gap:10px; margin-top:22px; }
+.quiz-actions button{ flex:1; padding:12px; border-radius:8px; font-family:inherit; font-size:14px; cursor:pointer; }
+#skipBtn{ background:var(--paper); border:1px solid var(--line); color:var(--ink-soft); }
+#skipBtn:disabled{ opacity:.4; cursor:not-allowed; }
+#nextBtn{ background:var(--ink); border:none; color:var(--paper-raised); font-weight:600; }
+#nextBtn:disabled{ opacity:.4; cursor:not-allowed; }
+
+/* ── Results screen ─────────────────────────────────────── */
+.results-hero{ text-align:center; padding: 10px 0 24px; }
+#finalScore{ font-family:'Noto Serif Bengali',serif; font-size:52px; font-weight:700; color:var(--gold); line-height:1; }
+.results-hero .lbl{ font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; margin-top:6px; }
+#finalBreakdown{ margin-top:14px; font-size:14px; }
+#finalAccuracy{ font-size:13px; color:var(--ink-soft); margin-top:4px; }
+
+.missed-item{
+  border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin-bottom:10px; background:var(--paper);
+}
+.missed-q{ font-weight:600; margin-bottom:6px; line-height:1.5; }
+.missed-a{ font-size:13.5px; color:var(--forest); margin-bottom:4px; }
+.missed-exp{ font-size:13px; color:var(--ink-soft); line-height:1.55; }
+.empty-note{ text-align:center; color:var(--ink-soft); padding:20px; }
+
+.results-actions{ display:flex; gap:10px; margin-top:20px; }
+.results-actions button{ flex:1; padding:12px; border-radius:8px; font-family:inherit; font-size:14px; cursor:pointer; }
+#retryBtn{ background:var(--ink); color:var(--paper-raised); border:none; font-weight:600; }
+#homeFromResults{ background:var(--paper); border:1px solid var(--line); color:var(--ink); }
+
+/* ── Submit form ────────────────────────────────────────── */
+.form-grid{ display:flex; flex-direction:column; gap:16px; }
+.form-row{ display:flex; gap:12px; flex-wrap:wrap; }
+.form-row > div{ flex:1; min-width:200px; }
+label.f{ display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin-bottom:6px; }
+select, textarea, input[type=text]{
+  width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:8px;
+  font-family:inherit; font-size:14px; background:var(--paper); color:var(--ink);
+}
+textarea{ resize:vertical; min-height:70px; line-height:1.5; }
+.hint{ font-size:12px; color:var(--ink-soft); margin-top:4px; }
+.form-message{ font-size:13.5px; padding:10px 14px; border-radius:8px; margin-top:4px; }
+.form-message.success{ background:var(--forest-soft); color:var(--forest); }
+.form-message.error{ background:var(--brick-soft); color:var(--brick); }
+.form-message:empty{ display:none; }
+
+.utility-row{
+  display:flex; gap:10px; margin-top:26px; padding-top:20px; border-top:1px dashed var(--line);
+  flex-wrap:wrap; align-items:center;
+}
+.utility-row .nav-btn{ font-size:12.5px; }
+.utility-note{ font-size:12px; color:var(--ink-soft); flex-basis:100%; margin-bottom:4px; }
+
+footer{ text-align:center; padding:24px; font-size:12px; color:var(--ink-soft); }
+
+@media (max-width: 640px){
+  header.topbar{ padding:14px 16px; flex-wrap:wrap; gap:10px; }
+  main{ padding:20px 14px 40px; }
+  .subject-grid{ grid-template-columns: 1fr 1fr; }
+}

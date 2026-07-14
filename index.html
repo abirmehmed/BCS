@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>বিসিএস প্র্যাকটিস</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="seal">২০০</div>
+    <div class="brand-text">
+      <h1>বিসিএস প্র্যাকটিস</h1>
+      <span>প্রিলিমিনারি প্রস্তুতি — নিজের প্রশ্নভাণ্ডার</span>
+    </div>
+  </div>
+  <div class="nav-actions">
+    <button class="nav-btn" id="homeNavBtn">হোম</button>
+    <button class="nav-btn primary" id="submitNavBtn">+ প্রশ্ন যোগ করুন</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- HOME: subject grid -->
+  <div id="homeScreen">
+    <div class="hero">
+      <h2>বিষয় বেছে নিন</h2>
+      <p>BPSC প্রিলিমিনারি সিলেবাসের ১০টি বিষয়, মোট ২০০ নম্বর</p>
+    </div>
+    <div class="subject-grid" id="subjectGrid"></div>
+  </div>
+
+  <!-- SETUP: subtopic + count -->
+  <div class="panel hidden" id="setupScreen">
+    <div class="panel-header">
+      <button class="ghost-btn" id="backFromSetup">← ফিরে যান</button>
+    </div>
+    <h2 id="setupTitle"></h2>
+
+    <label class="field-label">উপবিষয় নির্বাচন করুন</label>
+    <div class="subtopic-list" id="subtopicList"></div>
+
+    <label class="field-label">প্রশ্ন সংখ্যা</label>
+    <div class="count-row">
+      <input type="number" id="quizCount" min="1" value="10">
+      <span style="font-size:13px;color:var(--ink-soft);">(এলোমেলোভাবে বাছাই হবে)</span>
+    </div>
+    <div id="setupAvailable"></div>
+
+    <button class="primary-btn" id="startQuizBtn">কুইজ শুরু করুন</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="panel hidden" id="quizScreen">
+    <div class="quiz-topline">
+      <span id="quizProgress">প্রশ্ন ১ / ১০</span>
+      <span>স্কোর: <b id="scoreLive">0.0</b></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="quiz-tag" id="quizTag"></div>
+    <div id="questionText"></div>
+
+    <div class="options-wrap" id="optionsWrap"></div>
+
+    <div class="explain-box hidden" id="explainBox">
+      <b>ব্যাখ্যা</b>
+      <span id="explainText"></span>
+    </div>
+
+    <div class="quiz-actions">
+      <button id="skipBtn">স্কিপ করুন</button>
+      <button id="nextBtn" disabled>পরবর্তী →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="panel hidden" id="resultsScreen">
+    <div class="results-hero">
+      <div id="finalScore">0.0</div>
+      <div class="lbl">চূড়ান্ত স্কোর</div>
+      <div id="finalBreakdown"></div>
+      <div id="finalAccuracy"></div>
+    </div>
+    <label class="field-label">যে প্রশ্নগুলোতে ভুল হয়েছে</label>
+    <div id="missedList"></div>
+    <div class="results-actions">
+      <button id="retryBtn">আবার এই বিষয়ে</button>
+      <button id="homeFromResults">হোমে ফিরুন</button>
+    </div>
+  </div>
+
+  <!-- SUBMIT FORM -->
+  <div class="panel hidden" id="submitScreen">
+    <div class="panel-header">
+      <button class="ghost-btn" id="backFromSubmit">← ফিরে যান</button>
+    </div>
+    <h2 id="setupTitle2" style="font-family:'Noto Serif Bengali',serif;font-size:20px;margin:0 0 4px;">নতুন প্রশ্ন যোগ করুন</h2>
+    <p style="font-size:13px;color:var(--ink-soft);margin:0 0 20px;">
+      কুইজে প্রতিবার ৪টি অপশন দেখাবে — সঠিক উত্তর + আপনার দেওয়া distractor pool থেকে এলোমেলো ৩টি। তাই যত বেশি ভুল অপশন দেবেন (৫–৭টা), কুইজ তত বেশি ভ্যারিয়েশন দেখাবে।
+    </p>
+
+    <form class="form-grid" id="questionForm">
+      <div class="form-row">
+        <div>
+          <label class="f">বিষয়</label>
+          <select id="formSubject" required></select>
+        </div>
+        <div>
+          <label class="f">উপবিষয়</label>
+          <select id="formSubtopic" required></select>
+        </div>
+      </div>
+
+      <div>
+        <label class="f">প্রশ্ন</label>
+        <textarea id="formQuestion" required placeholder="যেমন: 'বালক' পত্রিকা প্রতিষ্ঠা কার কীর্তি?"></textarea>
+      </div>
+
+      <div>
+        <label class="f">সঠিক উত্তর</label>
+        <input type="text" id="formCorrect" required placeholder="যেমন: কাদম্বরী দেবী">
+      </div>
+
+      <div>
+        <label class="f">ভুল উত্তরসমূহ (distractor pool)</label>
+        <textarea id="formDistractors" required placeholder="একটি লাইনে একটি করে — কমপক্ষে ৩টি
+স্বর্ণকুমারী
+সেলিনা হোসেন
+আল মাহমুদ"></textarea>
+        <div class="hint">কমপক্ষে ৩টি আবশ্যক। বেশি দিলে (৫–৭টা) প্রতিবার ভিন্ন কম্বিনেশন দেখাবে।</div>
+      </div>
+
+      <div>
+        <label class="f">ব্যাখ্যা <span style="font-weight:400;text-transform:none;">(ঐচ্ছিক)</span></label>
+        <textarea id="formExplanation" placeholder="উত্তরের সংক্ষিপ্ত ব্যাখ্যা..."></textarea>
+      </div>
+
+      <div id="formMessage" class="form-message"></div>
+
+      <button type="submit" class="primary-btn">প্রশ্ন সংরক্ষণ করুন</button>
+    </form>
+
+    <div class="utility-row">
+      <div class="utility-note">
+        ⚠️ এই অ্যাপ সম্পূর্ণ ব্রাউজার-ভিত্তিক — আপনার যোগ করা প্রশ্ন শুধু এই ব্রাউজারে সংরক্ষিত থাকে (server নেই)। ব্রাউজার ডেটা মুছে গেলে হারিয়ে যাবে, তাই মাঝে মাঝে <b>Export</b> করে ব্যাকআপ রাখুন।
+      </div>
+      <button class="nav-btn" id="exportBtn">⬇ ব্যাকআপ Export করুন</button>
+      <label class="nav-btn" style="cursor:pointer;">
+        ⬆ ব্যাকআপ Import করুন
+        <input type="file" id="importInput" accept=".json" style="display:none;">
+      </label>
+      <button class="nav-btn" id="clearBtn" style="border-color:var(--brick);color:var(--brick);">🗑 আমার সব প্রশ্ন মুছুন</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>ভুল উত্তরে -০.৫ নেগেটিভ মার্কিং প্রযোজ্য · localStorage-এ সংরক্ষিত (এই ব্রাউজার/ডিভাইসে)</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
