@@ -249,24 +249,40 @@ document.getElementById('homeFromResults').addEventListener('click', ()=>{
 });
 
 // ── Submission form ────────────────────────────────────────────
+document.getElementById('tabBulkBtn').addEventListener('click', ()=>{
+  document.getElementById('tabBulkBtn').classList.add('selected');
+  document.getElementById('tabSingleBtn').classList.remove('selected');
+  document.getElementById('bulkSection').classList.remove('hidden');
+  document.getElementById('singleSection').classList.add('hidden');
+});
+document.getElementById('tabSingleBtn').addEventListener('click', ()=>{
+  document.getElementById('tabSingleBtn').classList.add('selected');
+  document.getElementById('tabBulkBtn').classList.remove('selected');
+  document.getElementById('singleSection').classList.remove('hidden');
+  document.getElementById('bulkSection').classList.add('hidden');
+});
+
 function openSubmitForm(){
-  populateSubjectSelect();
+  populateSubjectSelect(document.getElementById('formSubject'), document.getElementById('formSubtopic'));
+  populateSubjectSelect(document.getElementById('bulkSubject'), document.getElementById('bulkSubtopic'));
   show('submit');
 }
 
-function populateSubjectSelect(){
-  const sel = document.getElementById('formSubject');
-  sel.innerHTML = '<option value="">বিষয় নির্বাচন করুন</option>' +
+function populateSubjectSelect(subjectSel, subtopicSel){
+  subjectSel.innerHTML = '<option value="">বিষয় নির্বাচন করুন</option>' +
     SUBJECTS.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
-  document.getElementById('formSubtopic').innerHTML = '<option value="">প্রথমে বিষয় নির্বাচন করুন</option>';
+  subtopicSel.innerHTML = '<option value="">প্রথমে বিষয় নির্বাচন করুন</option>';
 }
 
-document.getElementById('formSubject').addEventListener('change', e=>{
-  const sub = SUBJECTS.find(s=>s.id===e.target.value);
-  const sel = document.getElementById('formSubtopic');
-  if(!sub){ sel.innerHTML = '<option value="">প্রথমে বিষয় নির্বাচন করুন</option>'; return; }
-  sel.innerHTML = sub.subtopics.map(st=>`<option value="${st.id}">${esc(st.name)}</option>`).join('');
-});
+function wireSubjectSubtopic(subjectSel, subtopicSel){
+  subjectSel.addEventListener('change', e=>{
+    const sub = SUBJECTS.find(s=>s.id===e.target.value);
+    if(!sub){ subtopicSel.innerHTML = '<option value="">প্রথমে বিষয় নির্বাচন করুন</option>'; return; }
+    subtopicSel.innerHTML = sub.subtopics.map(st=>`<option value="${st.id}">${esc(st.name)}</option>`).join('');
+  });
+}
+wireSubjectSubtopic(document.getElementById('formSubject'), document.getElementById('formSubtopic'));
+wireSubjectSubtopic(document.getElementById('bulkSubject'), document.getElementById('bulkSubtopic'));
 
 document.getElementById('questionForm').addEventListener('submit', e=>{
   e.preventDefault();
@@ -297,6 +313,103 @@ document.getElementById('questionForm').addEventListener('submit', e=>{
   msgEl.className = 'form-message success';
   document.getElementById('questionForm').reset();
   document.getElementById('formSubtopic').innerHTML = '<option value="">প্রথমে বিষয় নির্বাচন করুন</option>';
+});
+
+// ── Bulk paste parser ────────────────────────────────────────────
+// Expected per-question format (blank line between questions):
+//   ১. প্রশ্নের লেখা?
+//   (ক) অপশন১ (খ) অপশন২ (গ) অপশন৩ (ঘ) অপশন৪
+//   উত্তর: (গ) অপশন৩
+//   ব্যাখ্যা: ব্যাখ্যা টেক্সট (ঐচ্ছিক)
+function parseBulkBlock(block){
+  const lines = block.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(lines.length < 2) return { error: 'ব্লকটি অসম্পূর্ণ (কমপক্ষে প্রশ্ন + অপশন + উত্তর দরকার)' };
+
+  const optIdx = lines.findIndex(l => /\(ক\)/.test(l));
+  if(optIdx === -1) return { error: '(ক)(খ)(গ)(ঘ) ফরম্যাটে অপশন পাওয়া যায়নি' };
+
+  const question = lines.slice(0, optIdx).join(' ').replace(/^[০-৯0-9]+[.।)]\s*/, '').trim();
+  if(!question) return { error: 'প্রশ্নের লেখা খালি' };
+
+  const ansIdx = lines.findIndex(l => /^উত্তর/.test(l));
+  if(ansIdx === -1 || ansIdx < optIdx) return { error: '"উত্তর:" লাইন পাওয়া যায়নি' };
+
+  const optionsText = lines.slice(optIdx, ansIdx).join(' ');
+  const optRegex = /\((ক|খ|গ|ঘ)\)\s*([^()]+?)(?=\s*\((?:ক|খ|গ|ঘ)\)|$)/g;
+  const options = {};
+  let m;
+  while((m = optRegex.exec(optionsText))){
+    options[m[1]] = m[2].trim();
+  }
+  const foundKeys = Object.keys(options);
+  if(foundKeys.length < 4) return { error: `৪টি অপশনের বদলে ${foundKeys.length}টি পাওয়া গেছে` };
+
+  const ansMatch = lines[ansIdx].match(/উত্তর[:ঃ]?\s*\(?([ক-ঘ])\)?/);
+  const correctLetter = ansMatch ? ansMatch[1] : null;
+  if(!correctLetter || !options[correctLetter]) return { error: 'উত্তরের (ক/খ/গ/ঘ) শনাক্ত করা যায়নি' };
+
+  const correct = options[correctLetter];
+  const distractors = ['ক','খ','গ','ঘ'].filter(k=>k!==correctLetter).map(k=>options[k]);
+
+  const restLines = lines.slice(ansIdx+1);
+  const expIdx = restLines.findIndex(l=>/^ব্যাখ্যা/.test(l));
+  const explanation = expIdx === -1 ? '' :
+    restLines.slice(expIdx).join(' ').replace(/^ব্যাখ্যা[:ঃ]?\s*/, '').trim();
+
+  return { question, correct, distractors, explanation };
+}
+
+function parseBulkText(text){
+  const blocks = text.split(/\n\s*\n+/).map(b=>b.trim()).filter(Boolean);
+  return blocks.map((b,i)=>({ blockNum: i+1, raw: b, ...parseBulkBlock(b) }));
+}
+
+document.getElementById('bulkAddBtn').addEventListener('click', ()=>{
+  const subject = document.getElementById('bulkSubject').value;
+  const subtopic = document.getElementById('bulkSubtopic').value;
+  const text = document.getElementById('bulkText').value.trim();
+  const resultEl = document.getElementById('bulkResult');
+
+  if(!subject || !subtopic){
+    resultEl.innerHTML = '<div class="form-message error">আগে বিষয় ও উপবিষয় বেছে নিন — বাল্কের সব প্রশ্ন এই বিষয়ে যোগ হবে।</div>';
+    return;
+  }
+  if(!text){
+    resultEl.innerHTML = '<div class="form-message error">টেক্সট বক্সে প্রশ্ন পেস্ট করুন।</div>';
+    return;
+  }
+
+  const parsed = parseBulkText(text);
+  const good = parsed.filter(p=>!p.error);
+  const bad  = parsed.filter(p=>p.error);
+
+  if(good.length){
+    const list = loadUserQuestions();
+    good.forEach(p=>{
+      list.push({
+        id: 'user-' + Date.now() + '-' + Math.random().toString(36).slice(2,7),
+        subject, subtopic,
+        question: p.question, correct: p.correct, distractors: p.distractors, explanation: p.explanation
+      });
+    });
+    saveUserQuestions(list);
+    renderSubjectGrid();
+  }
+
+  let html = `<div class="form-message ${good.length?'success':'error'}">✅ ${good.length}টি প্রশ্ন যোগ হয়েছে।${bad.length?` ⚠️ ${bad.length}টি ব্লক পার্স করা যায়নি (নিচে দেখুন)।`:''}</div>`;
+  if(good.length){
+    html += '<div class="bulk-preview">' + good.slice(0,5).map(p=>
+      `<div class="bulk-preview-item"><b>${esc(p.question)}</b><span>✓ ${esc(p.correct)}</span></div>`
+    ).join('') + (good.length>5 ? `<div class="bulk-preview-more">+ আরও ${good.length-5}টি</div>` : '') + '</div>';
+  }
+  if(bad.length){
+    html += '<div class="bulk-errors"><b>এই ব্লকগুলোতে সমস্যা হয়েছে:</b>' + bad.map(p=>
+      `<div class="bulk-error-item">ব্লক #${p.blockNum}: ${esc(p.error)}<br><span class="bulk-error-raw">${esc(p.raw.slice(0,80))}${p.raw.length>80?'…':''}</span></div>`
+    ).join('') + '</div>';
+  }
+  resultEl.innerHTML = html;
+
+  if(good.length) document.getElementById('bulkText').value = bad.length ? bad.map(p=>p.raw).join('\n\n') : '';
 });
 
 // ── Export / Import (backup, since this is browser-only storage) ─

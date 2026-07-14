@@ -98,51 +98,96 @@
     <div class="panel-header">
       <button class="ghost-btn" id="backFromSubmit">← ফিরে যান</button>
     </div>
-    <h2 id="setupTitle2" style="font-family:'Noto Serif Bengali',serif;font-size:20px;margin:0 0 4px;">নতুন প্রশ্ন যোগ করুন</h2>
-    <p style="font-size:13px;color:var(--ink-soft);margin:0 0 20px;">
-      কুইজে প্রতিবার ৪টি অপশন দেখাবে — সঠিক উত্তর + আপনার দেওয়া distractor pool থেকে এলোমেলো ৩টি। তাই যত বেশি ভুল অপশন দেবেন (৫–৭টা), কুইজ তত বেশি ভ্যারিয়েশন দেখাবে।
-    </p>
+    <h2 id="setupTitle2" style="font-family:'Noto Serif Bengali',serif;font-size:20px;margin:0 0 4px;">প্রশ্ন যোগ করুন</h2>
 
-    <form class="form-grid" id="questionForm">
+    <div class="tab-row">
+      <button class="tab-btn selected" id="tabBulkBtn">📋 একসাথে অনেকগুলো (Bulk)</button>
+      <button class="tab-btn" id="tabSingleBtn">✏️ একটি একটি করে</button>
+    </div>
+
+    <!-- BULK ADD -->
+    <div id="bulkSection">
+      <p style="font-size:13px;color:var(--ink-soft);margin:16px 0;">
+        একবারে বিষয় ও উপবিষয় বেছে নিন — নিচের বক্সে <b>একই ফরম্যাটে একের পর এক প্রশ্ন পেস্ট করুন (মাঝে একটা ফাঁকা লাইন দিয়ে আলাদা করা)</b>, তারপর "সব প্রশ্ন যোগ করুন" চাপুন।
+      </p>
+
       <div class="form-row">
         <div>
           <label class="f">বিষয়</label>
-          <select id="formSubject" required></select>
+          <select id="bulkSubject" required></select>
         </div>
         <div>
           <label class="f">উপবিষয়</label>
-          <select id="formSubtopic" required></select>
+          <select id="bulkSubtopic" required></select>
         </div>
       </div>
 
-      <div>
-        <label class="f">প্রশ্ন</label>
-        <textarea id="formQuestion" required placeholder="যেমন: 'বালক' পত্রিকা প্রতিষ্ঠা কার কীর্তি?"></textarea>
-      </div>
+      <label class="f" style="margin-top:16px;display:block;">প্রশ্নসমূহ পেস্ট করুন</label>
+      <div class="format-example">
+        <b>ফরম্যাট (প্রতিটা প্রশ্নের মাঝে একটা ফাঁকা লাইন রাখুন):</b>
+<pre>১. প্রশ্নের লেখা এখানে?
+(ক) অপশন ১ (খ) অপশন ২ (গ) অপশন ৩ (ঘ) অপশন ৪
+উত্তর: (গ) অপশন ৩
+ব্যাখ্যা: ব্যাখ্যা এখানে (ঐচ্ছিক)
 
-      <div>
-        <label class="f">সঠিক উত্তর</label>
-        <input type="text" id="formCorrect" required placeholder="যেমন: কাদম্বরী দেবী">
+২. পরের প্রশ্ন...
+(ক) ... (খ) ... (গ) ... (ঘ) ...
+উত্তর: (ক) ...
+ব্যাখ্যা: ...</pre>
       </div>
+      <textarea id="bulkText" rows="14" placeholder="এখানে একাধিক প্রশ্ন পেস্ট করুন — উপরের ফরম্যাট অনুযায়ী..."></textarea>
 
-      <div>
-        <label class="f">ভুল উত্তরসমূহ (distractor pool)</label>
-        <textarea id="formDistractors" required placeholder="একটি লাইনে একটি করে — কমপক্ষে ৩টি
+      <button type="button" class="primary-btn" id="bulkAddBtn">সব প্রশ্ন যোগ করুন</button>
+      <div id="bulkResult"></div>
+    </div>
+
+    <!-- SINGLE ADD -->
+    <div id="singleSection" class="hidden">
+      <p style="font-size:13px;color:var(--ink-soft);margin:16px 0;">
+        কুইজে প্রতিবার ৪টি অপশন দেখাবে — সঠিক উত্তর + আপনার দেওয়া distractor pool থেকে এলোমেলো ৩টি। তাই যত বেশি ভুল অপশন দেবেন (৫–৭টা), কুইজ তত বেশি ভ্যারিয়েশন দেখাবে।
+      </p>
+
+      <form class="form-grid" id="questionForm">
+        <div class="form-row">
+          <div>
+            <label class="f">বিষয়</label>
+            <select id="formSubject" required></select>
+          </div>
+          <div>
+            <label class="f">উপবিষয়</label>
+            <select id="formSubtopic" required></select>
+          </div>
+        </div>
+
+        <div>
+          <label class="f">প্রশ্ন</label>
+          <textarea id="formQuestion" required placeholder="যেমন: 'বালক' পত্রিকা প্রতিষ্ঠা কার কীর্তি?"></textarea>
+        </div>
+
+        <div>
+          <label class="f">সঠিক উত্তর</label>
+          <input type="text" id="formCorrect" required placeholder="যেমন: কাদম্বরী দেবী">
+        </div>
+
+        <div>
+          <label class="f">ভুল উত্তরসমূহ (distractor pool)</label>
+          <textarea id="formDistractors" required placeholder="একটি লাইনে একটি করে — কমপক্ষে ৩টি
 স্বর্ণকুমারী
 সেলিনা হোসেন
 আল মাহমুদ"></textarea>
-        <div class="hint">কমপক্ষে ৩টি আবশ্যক। বেশি দিলে (৫–৭টা) প্রতিবার ভিন্ন কম্বিনেশন দেখাবে।</div>
-      </div>
+          <div class="hint">কমপক্ষে ৩টি আবশ্যক। বেশি দিলে (৫–৭টা) প্রতিবার ভিন্ন কম্বিনেশন দেখাবে।</div>
+        </div>
 
-      <div>
-        <label class="f">ব্যাখ্যা <span style="font-weight:400;text-transform:none;">(ঐচ্ছিক)</span></label>
-        <textarea id="formExplanation" placeholder="উত্তরের সংক্ষিপ্ত ব্যাখ্যা..."></textarea>
-      </div>
+        <div>
+          <label class="f">ব্যাখ্যা <span style="font-weight:400;text-transform:none;">(ঐচ্ছিক)</span></label>
+          <textarea id="formExplanation" placeholder="উত্তরের সংক্ষিপ্ত ব্যাখ্যা..."></textarea>
+        </div>
 
-      <div id="formMessage" class="form-message"></div>
+        <div id="formMessage" class="form-message"></div>
 
-      <button type="submit" class="primary-btn">প্রশ্ন সংরক্ষণ করুন</button>
-    </form>
+        <button type="submit" class="primary-btn">প্রশ্ন সংরক্ষণ করুন</button>
+      </form>
+    </div>
 
     <div class="utility-row">
       <div class="utility-note">
